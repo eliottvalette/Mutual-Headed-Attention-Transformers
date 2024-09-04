@@ -19,12 +19,12 @@ from torch.utils.data import DataLoader
 np.random.seed(42)
 torch.manual_seed(42)
 
-#load the data
-train_metadata_path = '/kaggle/input/isic-2024-challenge/train-metadata.csv'
-train_image_path = '/kaggle/input/isic-2024-challenge/train-image.hdf5'
-isic_2024_metadata_df = pd.read_csv(train_metadata_path)
+print('All libraries imported...')
 
-features_remove = ['lesion_id','attribution', 'copyright_license', 'image_type','iddx_full','iddx_1','iddx_2','iddx_3','iddx_4','iddx_5','mel_mitotic_index', 'mel_thick_mm','tbp_lv_dnn_lesion_confidence']
+#load the data
+train_metadata_path = 'isic-2024-challenge/train-metadata.csv'
+train_image_path = 'isic-2024-challenge/train-image.hdf5'
+isic_2024_metadata_df = pd.read_csv(train_metadata_path)
 
 #set device to gpu if available
 device = (
@@ -53,8 +53,8 @@ train_dataset = ConcatDatasetWithMetadataAndTarget([train_benign_dataset_no, tra
 val_dataset   = ImageLoaderWithMetadata(df=val_df,   file_hdf=train_image_path, transform=train_transform_no_augment)
 
 # Create DataLoaders
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=64, num_workers=4)
-val_loader   = DataLoader(val_dataset, shuffle=False, batch_size=64, num_workers=4)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size= 64, num_workers = 0 if device == 'cpu' else 4)
+val_loader   = DataLoader(val_dataset, shuffle=False, batch_size= 64, num_workers = 0 if device == 'cpu' else 4)
 
 """Training"""
 
@@ -70,4 +70,3 @@ optimizer = Adam(multimodal_transformer.parameters(), lr=0.00001)
 num_epochs = 20
 
 history = train_model(num_epochs, multimodal_transformer, train_loader, val_loader, optimizer, criterion, device)
-
