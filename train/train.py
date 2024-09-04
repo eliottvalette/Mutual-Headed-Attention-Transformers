@@ -115,4 +115,3 @@ def train_model(num_epochs, multimodal_transformer, train_loader, val_loader, op
               f'Val Loss: {val_loss / len(val_loader.dataset):.2f}, Val Accuracy: {val_accuracy:.2f}, '
               f'Val Recall: {val_recall:.2f}')
     return history
-
