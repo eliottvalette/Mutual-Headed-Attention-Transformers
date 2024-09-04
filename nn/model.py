@@ -21,6 +21,9 @@ device = (
     else "cpu"
 )
 
+features_remove = ['lesion_id','attribution', 'copyright_license', 'image_type','iddx_full','iddx_1','iddx_2','iddx_3','iddx_4','iddx_5','mel_mitotic_index', 'mel_thick_mm','tbp_lv_dnn_lesion_confidence']
+number_of_samples = 15_000
+
 #soft label encoder
 def soft_label_encoder(df):
     df = df.drop(columns = features_remove)
@@ -50,7 +53,7 @@ def soft_label_encoder(df):
     malignant_df = df[df['target']==1]
     benign_df = df[df['target']==0]
     total = range(len(benign_df))
-    index = rd.sample(total,15_000 - len(malignant_df))
+    index = rd.sample(total,number_of_samples - len(malignant_df))
     benign_df_2 = benign_df.iloc[index].reset_index(drop=True)
 
     df = pd.concat([malignant_df,benign_df_2]).reset_index(drop=True)
@@ -94,7 +97,7 @@ class ViTEncoder(nn.Module):
         return output
 
     
-model = ViTEncoder('vit_base_patch16_224', checkpoint_path ='/kaggle/input/vit-base-models-pretrained-pytorch/jx_vit_base_p16_224-80ecf9dd.pth', pretrained=True)
+model = ViTEncoder('vit_base_patch16_224', checkpoint_path ='archive/jx_vit_base_p16_224-80ecf9dd.pth', pretrained=True)
 model.to(device)
 
 #ViT FCN
